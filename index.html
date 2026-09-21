@@ -1,19 +1,440 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07130f"><title>NEXUS-32</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS-32 Programmer Calculator</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#090b0c;color:#eef5f1;font-family:system-ui;display:flex;justify-content:center;align-items:center;padding:14px}.calc{width:min(430px,100%);background:linear-gradient(145deg,#303638,#121516);border:1px solid #485055;border-radius:28px;padding:15px;box-shadow:0 28px 70px #000b}.top{display:flex;justify-content:space-between;align-items:center;padding:2px 5px 12px}.brand{font-weight:900;letter-spacing:.1em}.brand b{color:#39f19b}.brand small{display:block;color:#78827e;font-size:8px;letter-spacing:.17em}.led{width:9px;height:9px;border-radius:50%;background:#39f19b;box-shadow:0 0 14px #39f19b}.screen{background:#06110d;border:2px solid #263b32;border-radius:19px;padding:16px;box-shadow:inset 0 0 28px #000}.mode{font:700 10px monospace;color:#45e99b}.big{font:800 clamp(35px,11vw,54px) monospace;text-align:right;color:#82ffb5;min-height:58px;overflow-wrap:anywhere;margin:12px 0;text-shadow:0 0 12px #20e28a55}.out{display:grid;grid-template-columns:38px 1fr;gap:7px;border-top:1px solid #183529;padding-top:7px;margin-top:7px;font:700 11px monospace}.out label{color:#6e9784}.out span{text-align:right;color:#cbeadb;overflow-wrap:anywhere}.bases{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.base,.key,.bit{cursor:pointer;color:#f4f6f5;border:1px solid #454e52;border-radius:11px;background:linear-gradient(#30373a,#22272a);font-weight:800}.base{min-height:39px;font-size:11px}.base.active{background:#0a8957;border-color:#39f19b}.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.key{min-height:54px;font-size:19px;box-shadow:0 3px 0 #0d1011}.key:active,.bit:active{transform:translateY(2px)}.ac{background:#682d32}.op{background:#1d5275}.eq{background:#087a4b;border-color:#39f19b}.wide{grid-column:span 2}.bitsbox{margin-top:12px;padding:11px;background:#191e20;border:1px solid #3c4549;border-radius:16px}.bithead{font-size:10px;font-weight:900;margin-bottom:8px;display:flex;justify-content:space-between;color:#aeb8b4}.bithead span{font-size:8px;color:#6d7773}.bits{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}.bit{min-height:38px;font:800 13px monospace;background:#101415;color:#7f8985}.bit small{display:block;font-size:7px;color:#58635f}.bit.on{background:#0a8655;border-color:#39f19b;color:white}.steps{margin-top:12px;padding:11px;border:1px solid #343d40;border-radius:14px;background:#121718;color:#99a59f;font:11px/1.55 monospace}.steps b{color:#4bf0a0}.err{text-align:center;height:17px;color:#ff767c;font-size:11px;margin-top:3px}
-</style></head><body><div class="calc" id="c"><div class="top"><div class="brand"><b>NEXUS</b>-32<small>PROGRAMMER CALCULATOR</small></div><i class="led"></i></div>
-<div class="screen"><div class="mode" id="mode">DECIMAL</div><div class="big" id="big">255</div><div class="out"><label>HEX</label><span id="hex">000000FF</span></div><div class="out"><label>DEC</label><span id="dec">255</span></div><div class="out"><label>BIN</label><span id="bin">0000 0000 0000 0000 0000 0000 1111 1111</span></div></div>
-<div class="bases"><button class="base active" data-b="10">DEC</button><button class="base" data-b="2">BIN</button><button class="base" data-b="16">HEX</button></div>
-<div class="keys"><button class="key ac" id="ac">AC</button><button class="key" id="back">⌫</button><button class="key op" id="bitsbtn">BITS</button><button class="key eq" id="max">MAX</button>
-<button class="key" data-k="7">7</button><button class="key" data-k="8">8</button><button class="key" data-k="9">9</button><button class="key op" data-k="A">A</button>
-<button class="key" data-k="4">4</button><button class="key" data-k="5">5</button><button class="key" data-k="6">6</button><button class="key op" data-k="B">B</button>
-<button class="key" data-k="1">1</button><button class="key" data-k="2">2</button><button class="key" data-k="3">3</button><button class="key op" data-k="C">C</button>
-<button class="key wide" data-k="0">0</button><button class="key op" data-k="D">D</button><button class="key op" data-k="E">E</button><button class="key op" data-k="F">F</button></div>
-<div class="err" id="err"></div>
-<div class="bitsbox" id="bp"><div class="bithead">32-BIT SWITCH GRID <span>TAP A BIT TO TOGGLE</span></div><div class="bits" id="bits"></div></div>
-<div class="steps" id="steps"></div></div>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #26352e, #0a0d0c 55%);
+  font-family: Arial, sans-serif;
+  color: #d7ffe1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.calculator {
+  width: min(430px, 100%);
+  background: linear-gradient(145deg, #252b29, #101312);
+  border: 2px solid #39443f;
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow:
+    0 20px 50px #000,
+    inset 0 1px 1px #65736c;
+}
+
+.logo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.logo h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 3px;
+}
+
+.led {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #59ff87;
+  box-shadow: 0 0 15px #59ff87;
+}
+
+.screen {
+  background: #07110b;
+  border: 3px solid #303d35;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: inset 0 0 20px #000;
+}
+
+.display {
+  font-family: monospace;
+  font-size: clamp(25px, 7vw, 36px);
+  color: #74ff9b;
+  text-align: right;
+  overflow-wrap: anywhere;
+  min-height: 45px;
+  text-shadow: 0 0 8px #32ff70;
+}
+
+.subdisplay {
+  color: #73927d;
+  font-family: monospace;
+  text-align: right;
+  font-size: 12px;
+  margin-top: 8px;
+  min-height: 15px;
+}
+
+.modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  min-height: 48px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #d8e4dc;
+  background: linear-gradient(#414a46, #202522);
+  box-shadow:
+    inset 0 1px #68736d,
+    0 3px 0 #080909;
+  cursor: pointer;
+}
+
+button:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px #68736d;
+}
+
+.mode.active {
+  color: #07110b;
+  background: #67ff91;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+}
+
+.key {
+  min-height: 56px;
+}
+
+.operator {
+  color: #8dffad;
+}
+
+.danger {
+  color: #ff8f8f;
+}
+
+.equal {
+  color: #061108;
+  background: #65ff91;
+}
+
+.bits {
+  margin-top: 14px;
+  background: #0b100d;
+  border: 1px solid #29352e;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.bits-title {
+  font-size: 11px;
+  color: #6c8975;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.bit-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 3px;
+}
+
+.bit {
+  height: 13px;
+  border-radius: 2px;
+  background: #253029;
+}
+
+.bit.on {
+  background: #62ff8e;
+  box-shadow: 0 0 5px #62ff8e;
+}
+
+.info {
+  margin-top: 12px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #77917f;
+  line-height: 1.6;
+}
+
+@media (max-width: 360px) {
+  .calculator {
+    padding: 14px;
+  }
+
+  button {
+    min-height: 44px;
+  }
+
+  .key {
+    min-height: 50px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+  <div class="logo">
+    <h1>NEXUS-32</h1>
+    <div class="led"></div>
+  </div>
+
+  <div class="screen">
+    <div class="display" id="display">0</div>
+    <div class="subdisplay" id="subdisplay">DECIMAL</div>
+  </div>
+
+  <div class="modes">
+    <button class="mode active" data-mode="DEC">DEC</button>
+    <button class="mode" data-mode="BIN">BIN</button>
+    <button class="mode" data-mode="HEX">HEX</button>
+  </div>
+
+  <div class="keypad">
+
+    <button class="danger" data-action="clear">AC</button>
+    <button data-action="backspace">⌫</button>
+    <button data-action="bits">BITS</button>
+    <button class="operator" data-action="max">MAX</button>
+
+    <button data-value="7">7</button>
+    <button data-value="8">8</button>
+    <button data-value="9">9</button>
+    <button class="operator" data-value="+">+</button>
+
+    <button data-value="4">4</button>
+    <button data-value="5">5</button>
+    <button data-value="6">6</button>
+    <button class="operator" data-value="-">−</button>
+    <button data-value="1">1</button>
+    <button data-value="2">2</button>
+    <button data-value="3">3</button>
+    <button class="operator" data-value="*">×</button>
+
+    <button data-value="A">A</button>
+    <button data-value="0">0</button>
+    <button data-value="B">B</button>
+    <button class="operator" data-value="/">÷</button>
+
+    <button data-value="C">C</button>
+    <button data-value="D">D</button>
+    <button data-value="E">E</button>
+    <button class="equal" data-action="equals">=</button>
+
+  </div>
+
+  <div class="bits">
+    <div class="bits-title">32-BIT REGISTER</div>
+    <div class="bit-grid" id="bitGrid"></div>
+  </div>
+
+  <div class="info" id="info">
+    DEC: 0<br>
+    BIN: 00000000000000000000000000000000<br>
+    HEX: 0x00000000
+  </div>
+
+</div>
+
 <script>
-(()=>{let b=10,s="255",MAX=4294967295;const $=x=>document.getElementById(x), valid=k=>b==2?/^[01]$/.test(k):b==10?/^[0-9]$/.test(k):/^[0-9a-fA-F]$/.test(k),n=()=>s?parseInt(s,b):0,setN=x=>{s=b==2?x.toString(2):b==16?x.toString(16).toUpperCase():String(x)},grp=x=>x.replace(/(.{4})/g,"$1 ").trim();
-function draw(){let x=n();if(!Number.isFinite(x)||x<0||x>MAX){$("err").textContent="Use 0 to 4,294,967,295";return}$("err").textContent="";$("mode").textContent=b==2?"BINARY":b==16?"HEXADECIMAL":"DECIMAL";$("big").textContent=b==2?x.toString(2):b==16?x.toString(16).toUpperCase():x;$("hex").textContent=x.toString(16).toUpperCase().padStart(8,"0");$("dec").textContent=x;let z=x.toString(2).padStart(32,"0");$("bin").textContent=grp(z);$("bits").innerHTML="";for(let i=31;i>=0;i--){let on=Math.floor(x/2**i)%2,b=document.createElement("button");b.className="bit"+(on?" on":"");b.innerHTML="<small>"+i+"</small>"+on;b.onclick=()=>{setN(on?x-2**i:x+2**i);draw()};$("bits").append(b)}let a=[];for(let i=31;i>=0;i--)if(Math.floor(x/2**i)%2)a.push("2^"+i);$("steps").innerHTML="<b>CONVERSION</b><br>"+(a.length?a.join(" + ")+" = "+x:"0 = 0")+"<br>HEX: 0x"+$("hex").textContent+"<br>BIN: "+grp(z)}
-document.querySelectorAll(".base").forEach(q=>q.onclick=()=>{let x=n();b=+q.dataset.b;setN(x);document.querySelectorAll(".base").forEach(v=>v.classList.toggle("active",v===q));draw()});document.querySelectorAll("[data-k]").forEach(q=>q.onclick=()=>{if(valid(q.dataset.k)){if(s==="0")s="";s+=q.dataset.k;try{if(n()>MAX)s=s.slice(0,-1)}catch(e){}draw()}});$("ac").onclick=()=>{s="0";draw()};$("back").onclick=()=>{s=s.slice(0,-1)||"0";draw()};$("max").onclick=()=>{b=10;setN(MAX);document.querySelectorAll(".base").forEach(v=>v.classList.toggle("active",v.dataset.b==="10"));draw()};$("bitsbtn").onclick=()=>$("bp").scrollIntoView({behavior:"smooth",block:"nearest"});document.addEventListener("keydown",e=>{if(valid(e.key))document.querySelector('[data-k="'+e.key.toUpperCase()+'"]')?.click();else if(e.key==="Backspace")$("back").click();else if(e.key==="Escape")$("ac").click()});draw()})();
-</script></body></html>
+const display = document.getElementById("display");
+const subdisplay = document.getElementById("subdisplay");
+const info = document.getElementById("info");
+const bitGrid = document.getElementById("bitGrid");
+
+let mode = "DEC";
+let input = "0";
+let stored = null;
+let operator = null;
+
+for (let i = 0; i < 32; i++) {
+  const bit = document.createElement("div");
+  bit.className = "bit";
+  bitGrid.appendChild(bit);
+}
+
+function getBase() {
+  if (mode === "BIN") return 2;
+  if (mode === "HEX") return 16;
+  return 10;
+}
+
+function validCharacter(ch) {
+  if (mode === "BIN") return "01".includes(ch);
+  if (mode === "DEC") return "0123456789".includes(ch);
+  return "0123456789ABCDEF".includes(ch);
+}
+
+function update() {
+  display.textContent = input;
+  subdisplay.textContent =
+    mode === "DEC" ? "DECIMAL" :
+    mode === "BIN" ? "BINARY" : "HEXADECIMAL";
+
+  let value;
+
+  try {
+    value = parseInt(input || "0", getBase());
+    if (isNaN(value)) value = 0;
+  } catch {
+    value = 0;
+  }
+
+  value = Math.max(0, Math.min(4294967295, value));
+
+  const binary = value.toString(2).padStart(32, "0");
+  const hex = value.toString(16).toUpperCase().padStart(8, "0");
+
+  info.innerHTML =
+    "DEC: " + value + "<br>" +
+    "BIN: " + binary + "<br>" +
+    "HEX: 0x" + hex;
+
+  [...bitGrid.children].forEach((bit, i) => {
+    bit.classList.toggle("on", binary[i] === "1");
+  });
+}
+
+function addCharacter(ch) {
+  if (!validCharacter(ch)) return;
+
+  if (input === "0") input = ch;
+  else input += ch;
+
+  let value = parseInt(input, getBase());
+
+  if (value > 4294967295) {
+    input = "4294967295";
+    if (mode === "BIN")
+      input = "11111111111111111111111111111111";
+    if (mode === "HEX")
+      input = "FFFFFFFF";
+  }
+
+  update();
+}
+
+function clear() {
+  input = "0";
+  stored = null;
+  operator = null;
+  update();
+}
+
+function calculate() {
+  if (stored === null || operator === null) return;
+
+  const current = parseInt(input, getBase());
+  let result = 0;
+
+  if (operator === "+") result = stored + current;
+  if (operator === "-") result = stored - current;
+  if (operator === "*") result = stored * current;
+  if (operator === "/") {
+    result = current === 0 ? 0 : Math.floor(stored / current);
+  }
+
+  result = Math.max(0, Math.min(4294967295, result));
+
+  input =
+    mode === "BIN" ? result.toString(2) :
+    mode === "HEX" ? result.toString(16).toUpperCase() :
+    result.toString(10);
+
+  stored = null;
+  operator = null;
+
+  update();
+}
+
+document.querySelectorAll("[data-value]").forEach(button => {
+  button.addEventListener("click", () => {
+    const value = button.dataset.value;
+
+    if ("+-*/".includes(value)) {
+      stored = parseInt(input, getBase());
+      operator = value;
+      input = "0";
+      update();
+      return;
+    }
+
+    addCharacter(value);
+  });
+});
+
+document.querySelectorAll(".mode").forEach(button => {
+  button.addEventListener("click", () => {
+    const newMode = button.dataset.mode;
+
+    let value = parseInt(input || "0", getBase());
+
+    mode = newMode;
+
+    input =
+      mode === "BIN" ? value.toString(2) :
+      mode === "HEX" ? value.toString(16).toUpperCase() :
+      value.toString(10);
+
+    document.querySelectorAll(".mode").forEach(b =>
+      b.classList.toggle("active", b === button)
+    );
+
+    update();
+  });
+});
+  document.querySelector('[data-action="clear"]')
+  .addEventListener("click", clear);
+
+document.querySelector('[data-action="backspace"]')
+  .addEventListener("click", () => {
+    input = input.length > 1 ? input.slice(0, -1) : "0";
+    update();
+  });
+
+document.querySelector('[data-action="equals"]')
+  .addEventListener("click", calculate);
+
+document.querySelector('[data-action="max"]')
+  .addEventListener("click", () => {
+    input =
+      mode === "BIN"
+        ? "11111111111111111111111111111111"
+        : mode === "HEX"
+        ? "FFFFFFFF"
+        : "4294967295";
+
+    update();
+  });
+
+document.querySelector('[data-action="bits"]')
+  .addEventListener("click", update);
+
+update();
+</script>
+
+</body>
+</html>

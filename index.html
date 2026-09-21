@@ -1,195 +1,301 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXUS-32 Programmer Calculator</title>
+<title>Penguins Calculator</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top, #26352e, #0a0d0c 55%);
-  font-family: Arial, sans-serif;
-  color: #d7ffe1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.calculator {
-  width: min(430px, 100%);
-  background: linear-gradient(145deg, #252b29, #101312);
-  border: 2px solid #39443f;
-  border-radius: 28px;
-  padding: 20px;
-  box-shadow:
-    0 20px 50px #000,
-    inset 0 1px 1px #65736c;
-}
-
-.logo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.logo h1 {
-  margin: 0;
-  font-size: 22px;
-  letter-spacing: 3px;
-}
-
-.led {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #59ff87;
-  box-shadow: 0 0 15px #59ff87;
-}
-
-.screen {
-  background: #07110b;
-  border: 3px solid #303d35;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: inset 0 0 20px #000;
-}
-
-.display {
-  font-family: monospace;
-  font-size: clamp(25px, 7vw, 36px);
-  color: #74ff9b;
-  text-align: right;
-  overflow-wrap: anywhere;
-  min-height: 45px;
-  text-shadow: 0 0 8px #32ff70;
-}
-
-.subdisplay {
-  color: #73927d;
-  font-family: monospace;
-  text-align: right;
-  font-size: 12px;
-  margin-top: 8px;
-  min-height: 15px;
-}
-
-.modes {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-button {
-  border: 0;
-  border-radius: 10px;
-  min-height: 48px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #d8e4dc;
-  background: linear-gradient(#414a46, #202522);
-  box-shadow:
-    inset 0 1px #68736d,
-    0 3px 0 #080909;
-  cursor: pointer;
-}
-
-button:active {
-  transform: translateY(2px);
-  box-shadow: inset 0 1px #68736d;
-}
-
-.mode.active {
-  color: #07110b;
-  background: #67ff91;
-}
-
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 9px;
-}
-
-.key {
-  min-height: 56px;
-}
-
-.operator {
-  color: #8dffad;
-}
-
-.danger {
-  color: #ff8f8f;
-}
-
-.equal {
-  color: #061108;
-  background: #65ff91;
-}
-
-.bits {
-  margin-top: 14px;
-  background: #0b100d;
-  border: 1px solid #29352e;
-  border-radius: 12px;
-  padding: 12px;
-}
-
-.bits-title {
-  font-size: 11px;
-  color: #6c8975;
-  margin-bottom: 8px;
-  letter-spacing: 2px;
-}
-
-.bit-grid {
-  display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  gap: 3px;
-}
-
-.bit {
-  height: 13px;
-  border-radius: 2px;
-  background: #253029;
-}
-
-.bit.on {
-  background: #62ff8e;
-  box-shadow: 0 0 5px #62ff8e;
-}
-
-.info {
-  margin-top: 12px;
-  font-family: monospace;
-  font-size: 11px;
-  color: #77917f;
-  line-height: 1.6;
-}
-
-@media (max-width: 360px) {
-  .calculator {
-    padding: 14px;
+  :root {
+    --bg-1: #1a120c;
+    --bg-2: #241811;
+    --panel: #2c1d13;
+    --panel-edge: #4a2f1c;
+    --orange: #ff7a1a;
+    --orange-bright: #ffa04d;
+    --orange-dim: #7a4520;
+    --cream: #f4e3cf;
+    --cream-dim: #b89b82;
+    --danger: #ff5d5d;
+    --shadow-deep: rgba(0, 0, 0, 0.55);
   }
 
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 30% 0%, #3a2416 0%, transparent 55%),
+      radial-gradient(circle at 100% 100%, #201209 0%, transparent 50%),
+      var(--bg-1);
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--cream);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .calculator {
+    width: min(400px, 100%);
+    background: linear-gradient(160deg, var(--bg-2), #180f09);
+    border: 1px solid var(--panel-edge);
+    border-radius: 26px;
+    padding: 20px;
+    box-shadow:
+      0 30px 60px var(--shadow-deep),
+      inset 0 1px 0 rgba(255, 160, 77, 0.08);
+  }
+
+  /* ---------- header ---------- */
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 0 2px;
+  }
+
+  .penguin {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+
+  .brand h1 {
+    margin: 0;
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    color: var(--cream);
+    font-weight: 700;
+  }
+
+  .brand span {
+    display: block;
+    font-size: 10px;
+    color: var(--cream-dim);
+    letter-spacing: 1.5px;
+    margin-top: 1px;
+  }
+
+  .led {
+    margin-left: auto;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 10px var(--orange);
+  }
+
+  /* ---------- screen ---------- */
+
+  .screen {
+    background: #100a06;
+    border: 1px solid #3d2917;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  .display {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: clamp(26px, 7.5vw, 38px);
+    color: var(--orange-bright);
+    text-align: right;
+    overflow-wrap: anywhere;
+    min-height: 46px;
+    line-height: 1.1;
+    text-shadow: 0 0 10px rgba(255, 122, 26, 0.45);
+  }
+
+  .subdisplay {
+    color: var(--cream-dim);
+    font-family: Consolas, monospace;
+    text-align: right;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    min-height: 14px;
+  }
+
+  /* ---------- mode tabs ---------- */
+
+  .modes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+    background: #150d07;
+    border: 1px solid #3d2917;
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .mode {
+    border: 0;
+    border-radius: 9px;
+    padding: 9px 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--cream-dim);
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .mode.active {
+    color: #1a0f06;
+    background: linear-gradient(180deg, var(--orange-bright), var(--orange));
+    box-shadow: 0 2px 8px rgba(255, 122, 26, 0.35);
+  }
+
+  /* ---------- hex row ---------- */
+
+  .hexrow {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+
+  .hexrow button {
+    min-height: 38px;
+    font-size: 14px;
+  }
+
+  /* ---------- keypad ---------- */
+
   button {
-    min-height: 44px;
+    border: 0;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--cream);
+    background: linear-gradient(180deg, #3a2818, #24160c);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 200, 150, 0.12),
+      0 2px 0 #0e0704;
+    cursor: pointer;
+    transition: transform 0.05s ease;
+  }
+
+  button:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 0 rgba(255, 200, 150, 0.12);
+  }
+
+  button:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+  }
+
+  button:disabled:active {
+    transform: none;
+  }
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
   }
 
   .key {
-    min-height: 50px;
+    min-height: 54px;
   }
-}
+
+  .fn {
+    color: var(--orange-bright);
+    background: linear-gradient(180deg, #33241a, #201309);
+  }
+
+  .clear {
+    color: var(--danger);
+  }
+
+  .operator {
+    color: #1a0f06;
+    background: linear-gradient(180deg, var(--orange-bright), var(--orange));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 2px 0 #7a3d0e;
+  }
+
+  .zero {
+    grid-column: span 3;
+  }
+
+  .equal {
+    color: #1a0f06;
+    background: linear-gradient(180deg, #ffc98a, var(--orange));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 2px 0 #7a3d0e;
+  }
+
+  /* ---------- register panel ---------- */
+
+  .bits {
+    margin-top: 16px;
+    background: #150d07;
+    border: 1px solid #3d2917;
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  .bits-title {
+    font-size: 10px;
+    color: var(--cream-dim);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .bit-grid {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+
+  .bit-grid + .bit-grid {
+    margin-top: 3px;
+  }
+
+  .bit {
+    height: 11px;
+    border-radius: 2px;
+    background: #2a1a10;
+    border: 1px solid #3d2917;
+  }
+
+  .bit.on {
+    background: var(--orange);
+    border-color: var(--orange-bright);
+    box-shadow: 0 0 6px rgba(255, 122, 26, 0.7);
+  }
+
+  .info {
+    margin-top: 10px;
+    font-family: Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--cream-dim);
+    line-height: 1.7;
+  }
+
+  .info b {
+    color: var(--orange-bright);
+    font-weight: 600;
+  }
+
+  @media (max-width: 360px) {
+    .calculator { padding: 14px; }
+    .key { min-height: 48px; }
+  }
 </style>
 </head>
 
@@ -197,8 +303,23 @@ button:active {
 
 <div class="calculator">
 
-  <div class="logo">
-    <h1>NEXUS-32</h1>
+  <div class="header">
+    <svg class="penguin" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="32" cy="36" rx="18" ry="24" fill="#1a120c"/>
+      <ellipse cx="32" cy="40" rx="11" ry="17" fill="#f4e3cf"/>
+      <ellipse cx="32" cy="14" rx="12" ry="11" fill="#1a120c"/>
+      <ellipse cx="32" cy="16" rx="7" ry="6" fill="#f4e3cf"/>
+      <polygon points="32,17 28,22 36,22" fill="#ff7a1a"/>
+      <circle cx="27" cy="12" r="1.6" fill="#1a120c"/>
+      <circle cx="37" cy="12" r="1.6" fill="#1a120c"/>
+      <ellipse cx="32" cy="55" rx="9" ry="3" fill="#ff7a1a"/>
+      <polygon points="14,32 6,38 15,40" fill="#1a120c"/>
+      <polygon points="50,32 58,38 49,40" fill="#1a120c"/>
+    </svg>
+    <div class="brand">
+      <h1>PENGUINS</h1>
+      <span>CALCULATOR</span>
+    </div>
     <div class="led"></div>
   </div>
 
@@ -213,48 +334,51 @@ button:active {
     <button class="mode" data-mode="HEX">HEX</button>
   </div>
 
+  <div class="hexrow" id="hexRow">
+    <button class="key" data-value="A" disabled>A</button>
+    <button class="key" data-value="B" disabled>B</button>
+    <button class="key" data-value="C" disabled>C</button>
+    <button class="key" data-value="D" disabled>D</button>
+    <button class="key" data-value="E" disabled>E</button>
+    <button class="key" data-value="F" disabled>F</button>
+  </div>
+
   <div class="keypad">
 
-    <button class="danger" data-action="clear">AC</button>
-    <button data-action="backspace">⌫</button>
-    <button data-action="bits">BITS</button>
-    <button class="operator" data-action="max">MAX</button>
+    <button class="key fn clear" data-action="clear">AC</button>
+    <button class="key fn" data-action="backspace">⌫</button>
+    <button class="key fn" data-action="max">MAX</button>
+    <button class="key operator" data-value="/">÷</button>
 
-    <button data-value="7">7</button>
-    <button data-value="8">8</button>
-    <button data-value="9">9</button>
-    <button class="operator" data-value="+">+</button>
+    <button class="key" data-value="7">7</button>
+    <button class="key" data-value="8">8</button>
+    <button class="key" data-value="9">9</button>
+    <button class="key operator" data-value="*">×</button>
 
-    <button data-value="4">4</button>
-    <button data-value="5">5</button>
-    <button data-value="6">6</button>
-    <button class="operator" data-value="-">−</button>
-    <button data-value="1">1</button>
-    <button data-value="2">2</button>
-    <button data-value="3">3</button>
-    <button class="operator" data-value="*">×</button>
+    <button class="key" data-value="4">4</button>
+    <button class="key" data-value="5">5</button>
+    <button class="key" data-value="6">6</button>
+    <button class="key operator" data-value="-">−</button>
 
-    <button data-value="A">A</button>
-    <button data-value="0">0</button>
-    <button data-value="B">B</button>
-    <button class="operator" data-value="/">÷</button>
+    <button class="key" data-value="1">1</button>
+    <button class="key" data-value="2">2</button>
+    <button class="key" data-value="3">3</button>
+    <button class="key operator" data-value="+">+</button>
 
-    <button data-value="C">C</button>
-    <button data-value="D">D</button>
-    <button data-value="E">E</button>
-    <button class="equal" data-action="equals">=</button>
+    <button class="key zero" data-value="0">0</button>
+    <button class="key equal" data-action="equals">=</button>
 
   </div>
 
   <div class="bits">
-    <div class="bits-title">32-BIT REGISTER</div>
-    <div class="bit-grid" id="bitGrid"></div>
-  </div>
-
-  <div class="info" id="info">
-    DEC: 0<br>
-    BIN: 00000000000000000000000000000000<br>
-    HEX: 0x00000000
+    <div class="bits-title"><span>32-BIT REGISTER</span><span id="bitsHint">MSB → LSB</span></div>
+    <div class="bit-grid" id="bitGridHigh"></div>
+    <div class="bit-grid" id="bitGridLow"></div>
+    <div class="info" id="info">
+      <b>DEC</b> 0<br>
+      <b>BIN</b> 00000000000000000000000000000000<br>
+      <b>HEX</b> 0x00000000
+    </div>
   </div>
 
 </div>
@@ -263,18 +387,27 @@ button:active {
 const display = document.getElementById("display");
 const subdisplay = document.getElementById("subdisplay");
 const info = document.getElementById("info");
-const bitGrid = document.getElementById("bitGrid");
+const bitGridHigh = document.getElementById("bitGridHigh");
+const bitGridLow = document.getElementById("bitGridLow");
+const hexButtons = document.querySelectorAll("#hexRow [data-value]");
+
+const MAX_VAL = 4294967295;
 
 let mode = "DEC";
 let input = "0";
 let stored = null;
 let operator = null;
 
-for (let i = 0; i < 32; i++) {
-  const bit = document.createElement("div");
-  bit.className = "bit";
-  bitGrid.appendChild(bit);
+for (let i = 0; i < 16; i++) {
+  const b1 = document.createElement("div");
+  b1.className = "bit";
+  bitGridHigh.appendChild(b1);
+
+  const b2 = document.createElement("div");
+  b2.className = "bit";
+  bitGridLow.appendChild(b2);
 }
+const bits = [...bitGridHigh.children, ...bitGridLow.children];
 
 function getBase() {
   if (mode === "BIN") return 2;
@@ -294,28 +427,19 @@ function update() {
     mode === "DEC" ? "DECIMAL" :
     mode === "BIN" ? "BINARY" : "HEXADECIMAL";
 
-  let value;
-
-  try {
-    value = parseInt(input || "0", getBase());
-    if (isNaN(value)) value = 0;
-  } catch {
-    value = 0;
-  }
-
-  value = Math.max(0, Math.min(4294967295, value));
+  let value = parseInt(input || "0", getBase());
+  if (isNaN(value)) value = 0;
+  value = Math.max(0, Math.min(MAX_VAL, value));
 
   const binary = value.toString(2).padStart(32, "0");
   const hex = value.toString(16).toUpperCase().padStart(8, "0");
 
   info.innerHTML =
-    "DEC: " + value + "<br>" +
-    "BIN: " + binary + "<br>" +
-    "HEX: 0x" + hex;
+    "<b>DEC</b> " + value + "<br>" +
+    "<b>BIN</b> " + binary + "<br>" +
+    "<b>HEX</b> 0x" + hex;
 
-  [...bitGrid.children].forEach((bit, i) => {
-    bit.classList.toggle("on", binary[i] === "1");
-  });
+  bits.forEach((bit, i) => bit.classList.toggle("on", binary[i] === "1"));
 }
 
 function addCharacter(ch) {
@@ -326,12 +450,11 @@ function addCharacter(ch) {
 
   let value = parseInt(input, getBase());
 
-  if (value > 4294967295) {
-    input = "4294967295";
-    if (mode === "BIN")
-      input = "11111111111111111111111111111111";
-    if (mode === "HEX")
-      input = "FFFFFFFF";
+  if (value > MAX_VAL) {
+    input =
+      mode === "BIN" ? MAX_VAL.toString(2) :
+      mode === "HEX" ? MAX_VAL.toString(16).toUpperCase() :
+      String(MAX_VAL);
   }
 
   update();
@@ -344,6 +467,11 @@ function clear() {
   update();
 }
 
+function backspace() {
+  input = input.length > 1 ? input.slice(0, -1) : "0";
+  update();
+}
+
 function calculate() {
   if (stored === null || operator === null) return;
 
@@ -353,11 +481,9 @@ function calculate() {
   if (operator === "+") result = stored + current;
   if (operator === "-") result = stored - current;
   if (operator === "*") result = stored * current;
-  if (operator === "/") {
-    result = current === 0 ? 0 : Math.floor(stored / current);
-  }
+  if (operator === "/") result = current === 0 ? 0 : Math.floor(stored / current);
 
-  result = Math.max(0, Math.min(4294967295, result));
+  result = Math.max(0, Math.min(MAX_VAL, result));
 
   input =
     mode === "BIN" ? result.toString(2) :
@@ -366,6 +492,23 @@ function calculate() {
 
   stored = null;
   operator = null;
+  update();
+}
+
+function setMode(newMode) {
+  const value = parseInt(input || "0", getBase());
+  mode = newMode;
+
+  input =
+    mode === "BIN" ? value.toString(2) :
+    mode === "HEX" ? value.toString(16).toUpperCase() :
+    value.toString(10);
+
+  document.querySelectorAll(".mode").forEach(b =>
+    b.classList.toggle("active", b.dataset.mode === mode)
+  );
+
+  hexButtons.forEach(b => (b.disabled = mode !== "HEX"));
 
   update();
 }
@@ -387,51 +530,39 @@ document.querySelectorAll("[data-value]").forEach(button => {
 });
 
 document.querySelectorAll(".mode").forEach(button => {
-  button.addEventListener("click", () => {
-    const newMode = button.dataset.mode;
-
-    let value = parseInt(input || "0", getBase());
-
-    mode = newMode;
-
-    input =
-      mode === "BIN" ? value.toString(2) :
-      mode === "HEX" ? value.toString(16).toUpperCase() :
-      value.toString(10);
-
-    document.querySelectorAll(".mode").forEach(b =>
-      b.classList.toggle("active", b === button)
-    );
-
-    update();
-  });
+  button.addEventListener("click", () => setMode(button.dataset.mode));
 });
-  document.querySelector('[data-action="clear"]')
-  .addEventListener("click", clear);
 
-document.querySelector('[data-action="backspace"]')
-  .addEventListener("click", () => {
-    input = input.length > 1 ? input.slice(0, -1) : "0";
+document.querySelector('[data-action="clear"]').addEventListener("click", clear);
+document.querySelector('[data-action="backspace"]').addEventListener("click", backspace);
+document.querySelector('[data-action="equals"]').addEventListener("click", calculate);
+document.querySelector('[data-action="max"]').addEventListener("click", () => {
+  input =
+    mode === "BIN" ? MAX_VAL.toString(2) :
+    mode === "HEX" ? MAX_VAL.toString(16).toUpperCase() :
+    String(MAX_VAL);
+  update();
+});
+
+// keyboard support
+window.addEventListener("keydown", (e) => {
+  const k = e.key;
+  if (/^[0-9a-fA-F]$/.test(k) && validCharacter(k.toUpperCase())) {
+    addCharacter(k.toUpperCase());
+  } else if ("+-*/".includes(k)) {
+    stored = parseInt(input, getBase());
+    operator = k;
+    input = "0";
     update();
-  });
-
-document.querySelector('[data-action="equals"]')
-  .addEventListener("click", calculate);
-
-document.querySelector('[data-action="max"]')
-  .addEventListener("click", () => {
-    input =
-      mode === "BIN"
-        ? "11111111111111111111111111111111"
-        : mode === "HEX"
-        ? "FFFFFFFF"
-        : "4294967295";
-
-    update();
-  });
-
-document.querySelector('[data-action="bits"]')
-  .addEventListener("click", update);
+  } else if (k === "Enter" || k === "=") {
+    e.preventDefault();
+    calculate();
+  } else if (k === "Backspace") {
+    backspace();
+  } else if (k === "Escape") {
+    clear();
+  }
+});
 
 update();
 </script>

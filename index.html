@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,6 +98,41 @@
     padding: 16px 18px;
     margin-bottom: 12px;
     box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  .history-tape {
+    max-height: 0;
+    overflow-y: auto;
+    transition: max-height 0.2s ease;
+    text-align: right;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    color: var(--cream-dim);
+    line-height: 1.7;
+  }
+
+  .history-tape.has-entries {
+    max-height: 66px;
+    margin-bottom: 8px;
+  }
+
+  .history-tape div {
+    opacity: 0.8;
+    overflow-wrap: anywhere;
+  }
+
+  .history-tape .h-result {
+    color: var(--orange-bright);
+    margin-left: 6px;
+  }
+
+  .expr-trail {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    color: var(--cream-dim);
+    text-align: right;
+    min-height: 16px;
+    overflow-wrap: anywhere;
   }
 
   .display {
@@ -449,6 +484,8 @@
   </div>
 
   <div class="screen">
+    <div class="history-tape" id="historyTape"></div>
+    <div class="expr-trail" id="exprTrail"></div>
     <div class="display" id="display">0</div>
     <div class="subdisplay" id="subdisplay">DECIMAL</div>
   </div>
@@ -498,7 +535,7 @@
   <div class="bits">
     <div class="bits-title">
       <span>32-BIT REGISTER</span>
-      <button class="steps-btn" id="stepsBtn" type="button">РАЗБОР →</button>
+      <button class="steps-btn" id="stepsBtn" type="button">STEPS →</button>
     </div>
     <div class="bit-grid" id="bitGridHigh"></div>
     <div class="bit-grid" id="bitGridLow"></div>
@@ -514,10 +551,10 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-head">
-      <h2>Как получено число</h2>
+      <h2>How the number is built</h2>
       <button class="modal-close" id="modalClose" type="button">✕</button>
     </div>
-    <div class="modal-value">Текущее значение: <b id="modalDec">0</b> (десятичное)</div>
+    <div class="modal-value">Current value: <b id="modalDec">0</b> (decimal)</div>
 
     <div class="breakdown-block">
       <div class="breakdown-title">DEC → BIN</div>
@@ -545,8 +582,10 @@ const MAX_VAL = 4294967295;
 
 let mode = "DEC";
 let input = "0";
-let stored = null;
-let operator = null;
+let exprTokens = [];   // alternating {type:'num', dec} / {type:'op', symbol}
+let history = [];      // {expr, result} for the current session
+
+const OP_SYMBOL = { "+": "+", "-": "−", "*": "×", "/": "÷" };
 
 for (let i = 0; i < 16; i++) {
   const b1 = document.createElement("div");
@@ -610,10 +649,35 @@ function addCharacter(ch) {
   update();
 }
 
+function formatNum(dec) {
+  return mode === "BIN" ? dec.toString(2) :
+    mode === "HEX" ? dec.toString(16).toUpperCase() :
+    dec.toString(10);
+}
+
+function renderTrail() {
+  const trail = document.getElementById("exprTrail");
+  if (exprTokens.length === 0) {
+    trail.textContent = "";
+    return;
+  }
+  const parts = exprTokens.map(t => t.type === "num" ? formatNum(t.dec) : OP_SYMBOL[t.symbol]);
+  trail.textContent = parts.join(" ") + " " + input;
+}
+
+function renderHistory() {
+  const tape = document.getElementById("historyTape");
+  tape.innerHTML = history
+    .map(h => `<div>${h.expr} <span class="h-result">= ${h.result}</span></div>`)
+    .join("");
+  tape.classList.toggle("has-entries", history.length > 0);
+  tape.scrollTop = tape.scrollHeight;
+}
+
 function clear() {
   input = "0";
-  stored = null;
-  operator = null;
+  exprTokens = [];
+  renderTrail();
   update();
 }
 

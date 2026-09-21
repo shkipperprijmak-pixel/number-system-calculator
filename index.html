@@ -292,6 +292,131 @@
     font-weight: 600;
   }
 
+  /* ---------- steps trigger ---------- */
+
+  .steps-btn {
+    border: 1px solid var(--orange-dim);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--orange-bright);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    cursor: pointer;
+    box-shadow: none;
+  }
+
+  .steps-btn:active {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+
+  /* ---------- breakdown modal ---------- */
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 6, 3, 0.72);
+    backdrop-filter: blur(2px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal {
+    width: min(360px, 100%);
+    max-height: 82vh;
+    overflow-y: auto;
+    background: linear-gradient(160deg, #2c1d13, #180f09);
+    border: 1px solid var(--panel-edge);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .modal-head h2 {
+    margin: 0;
+    font-size: 15px;
+    color: var(--cream);
+  }
+
+  .modal-close {
+    width: 26px;
+    height: 26px;
+    min-height: 0;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--cream-dim);
+    background: #1f140c;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .modal-value {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    color: var(--cream-dim);
+    margin-bottom: 14px;
+  }
+
+  .modal-value b {
+    color: var(--orange-bright);
+  }
+
+  .breakdown-block + .breakdown-block {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #3d2917;
+  }
+
+  .breakdown-title {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--orange-bright);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .breakdown-formula {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    color: var(--cream);
+    line-height: 1.9;
+    word-break: break-word;
+  }
+
+  .breakdown-formula .term {
+    color: var(--cream-dim);
+  }
+
+  .breakdown-formula .term b {
+    color: var(--orange-bright);
+    font-weight: 600;
+  }
+
+  .breakdown-result {
+    margin-top: 8px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    color: var(--orange-bright);
+    font-weight: 700;
+  }
+
   @media (max-width: 360px) {
     .calculator { padding: 14px; }
     .key { min-height: 48px; }
@@ -371,7 +496,10 @@
   </div>
 
   <div class="bits">
-    <div class="bits-title"><span>32-BIT REGISTER</span><span id="bitsHint">MSB → LSB</span></div>
+    <div class="bits-title">
+      <span>32-BIT REGISTER</span>
+      <button class="steps-btn" id="stepsBtn" type="button">РАЗБОР →</button>
+    </div>
     <div class="bit-grid" id="bitGridHigh"></div>
     <div class="bit-grid" id="bitGridLow"></div>
     <div class="info" id="info">
@@ -381,6 +509,28 @@
     </div>
   </div>
 
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Как получено число</h2>
+      <button class="modal-close" id="modalClose" type="button">✕</button>
+    </div>
+    <div class="modal-value">Текущее значение: <b id="modalDec">0</b> (десятичное)</div>
+
+    <div class="breakdown-block">
+      <div class="breakdown-title">DEC → BIN</div>
+      <div class="breakdown-formula" id="binFormula"></div>
+      <div class="breakdown-result" id="binResult"></div>
+    </div>
+
+    <div class="breakdown-block">
+      <div class="breakdown-title">DEC → HEX</div>
+      <div class="breakdown-formula" id="hexFormula"></div>
+      <div class="breakdown-result" id="hexResult"></div>
+    </div>
+  </div>
 </div>
 
 <script>

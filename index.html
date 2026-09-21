@@ -694,8 +694,82 @@ document.querySelector('[data-action="max"]').addEventListener("click", () => {
   update();
 });
 
+// ---------- step-by-step breakdown ----------
+
+const modalOverlay = document.getElementById("modalOverlay");
+const SUPERSCRIPT = { "0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹" };
+
+function toSuperscript(n) {
+  return String(n).split("").map(d => SUPERSCRIPT[d]).join("");
+}
+
+// Decomposes `value` into its non-zero base-`base` place-value terms,
+// e.g. 45 in base 2 -> ["32","8","4","1"], in base 16 -> ["2×16¹","13×16⁰"]
+function buildBreakdown(value, base) {
+  const repr = value.toString(base).toUpperCase();
+
+  if (value === 0) {
+    return { formula: '<span class="term"><b>0</b></span>', result: repr };
+  }
+
+  const terms = [];
+  for (let i = 0; i < repr.length; i++) {
+    const power = repr.length - 1 - i;
+    const digitVal = parseInt(repr[i], base);
+    if (digitVal === 0) continue;
+
+    let label;
+    if (base === 2) {
+      label = String(Math.pow(base, power));
+    } else {
+      const coeff = digitVal > 1 ? digitVal + "×" : "";
+      const exp = power > 0 ? base + toSuperscript(power) : String(base ** 0);
+      label = coeff + exp;
+    }
+    terms.push(label);
+  }
+
+  const formula = terms.map(t => `<span class="term"><b>${t}</b></span>`).join(' <span class="term">+</span> ');
+  return { formula, result: repr };
+}
+
+function openStepsModal() {
+  let value = parseInt(input || "0", getBase());
+  if (isNaN(value)) value = 0;
+  value = Math.max(0, Math.min(MAX_VAL, value));
+
+  document.getElementById("modalDec").textContent = value;
+
+  const bin = buildBreakdown(value, 2);
+  document.getElementById("binFormula").innerHTML =
+    bin.formula + ' <span class="term">=</span> <span class="term"><b>' + value + "</b></span>";
+  document.getElementById("binResult").textContent = "→ " + bin.result + "₂";
+
+  const hex = buildBreakdown(value, 16);
+  document.getElementById("hexFormula").innerHTML =
+    hex.formula + ' <span class="term">=</span> <span class="term"><b>' + value + "</b></span>";
+  document.getElementById("hexResult").textContent = "→ 0x" + hex.result;
+
+  modalOverlay.classList.add("open");
+}
+
+function closeStepsModal() {
+  modalOverlay.classList.remove("open");
+}
+
+document.getElementById("stepsBtn").addEventListener("click", openStepsModal);
+document.getElementById("modalClose").addEventListener("click", closeStepsModal);
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) closeStepsModal();
+});
+
 // keyboard support
 window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && modalOverlay.classList.contains("open")) {
+    closeStepsModal();
+    return;
+  }
+
   const k = e.key;
   if (/^[0-9a-fA-F]$/.test(k) && validCharacter(k.toUpperCase())) {
     addCharacter(k.toUpperCase());

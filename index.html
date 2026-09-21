@@ -46,6 +46,8 @@
     box-shadow:
       0 30px 60px var(--shadow-deep),
       inset 0 1px 0 rgba(255, 160, 77, 0.08);
+    position: relative;
+    overflow: hidden;
   }
 
   /* ---------- header ---------- */
@@ -80,13 +82,152 @@
     margin-top: 1px;
   }
 
-  .led {
+  .icon-btn {
+    width: 30px;
+    height: 30px;
+    min-height: 0;
+    flex-shrink: 0;
     margin-left: auto;
+    border-radius: 9px;
+    background: #201309;
+    box-shadow: inset 0 1px 0 rgba(255, 200, 150, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .icon-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .led {
+    margin-left: 2px;
     width: 9px;
     height: 9px;
     border-radius: 50%;
     background: var(--orange);
     box-shadow: 0 0 10px var(--orange);
+  }
+
+  /* ---------- history sidebar ---------- */
+
+  .sidebar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 5, 3, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    border-radius: inherit;
+    z-index: 15;
+  }
+
+  .sidebar-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(165deg, #21150f, #130b06);
+    border-right: 1px solid var(--panel-edge);
+    border-radius: inherit;
+    transform: translateX(-104%);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 18px 12px;
+    border-bottom: 1px solid #3d2917;
+    flex-shrink: 0;
+  }
+
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cream);
+  }
+
+  .sidebar-head-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .sidebar-clear,
+  .sidebar-close {
+    background: transparent;
+    box-shadow: none;
+    color: var(--orange-bright);
+    font-size: 12px;
+    font-weight: 700;
+    min-height: 0;
+    padding: 5px 8px;
+  }
+
+  .sidebar-clear:active,
+  .sidebar-close:active {
+    transform: none;
+    opacity: 0.7;
+  }
+
+  .sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 18px 18px;
+  }
+
+  .hist-group-title {
+    font-size: 11px;
+    color: var(--cream-dim);
+    letter-spacing: 1px;
+    margin: 16px 0 4px;
+  }
+
+  .hist-entry {
+    padding: 9px 0;
+    border-bottom: 1px solid #2b1c12;
+  }
+
+  .hist-entry:last-child {
+    border-bottom: none;
+  }
+
+  .hist-expr {
+    font-family: Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--cream-dim);
+    overflow-wrap: anywhere;
+  }
+
+  .hist-result {
+    font-family: Consolas, monospace;
+    font-size: 19px;
+    color: var(--cream);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .hist-empty {
+    color: var(--cream-dim);
+    font-size: 13px;
+    text-align: center;
+    padding: 36px 0;
   }
 
   /* ---------- screen ---------- */
@@ -98,32 +239,6 @@
     padding: 16px 18px;
     margin-bottom: 12px;
     box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
-  }
-
-  .history-tape {
-    max-height: 0;
-    overflow-y: auto;
-    transition: max-height 0.2s ease;
-    text-align: right;
-    font-family: Consolas, monospace;
-    font-size: 12px;
-    color: var(--cream-dim);
-    line-height: 1.7;
-  }
-
-  .history-tape.has-entries {
-    max-height: 66px;
-    margin-bottom: 8px;
-  }
-
-  .history-tape div {
-    opacity: 0.8;
-    overflow-wrap: anywhere;
-  }
-
-  .history-tape .h-result {
-    color: var(--orange-bright);
-    margin-left: 6px;
   }
 
   .expr-trail {
@@ -347,6 +462,52 @@
     box-shadow: none;
   }
 
+  .bits-title-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  /* ---------- reference table ---------- */
+
+  .ref-table {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+  }
+
+  .ref-row {
+    display: grid;
+    grid-template-columns: 0.8fr 1.6fr 0.8fr;
+    padding: 7px 2px;
+    border-bottom: 1px solid #2b1c12;
+  }
+
+  .ref-row:last-child {
+    border-bottom: none;
+  }
+
+  .ref-row span:nth-child(2) {
+    color: var(--cream);
+    letter-spacing: 1.5px;
+  }
+
+  .ref-row span:nth-child(3) {
+    color: var(--orange-bright);
+    font-weight: 700;
+  }
+
+  .ref-head {
+    color: var(--orange-bright);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid #3d2917;
+    padding-bottom: 9px;
+  }
+
+  .ref-head span {
+    color: var(--orange-bright);
+  }
+
   /* ---------- breakdown modal ---------- */
 
   .modal-overlay {
@@ -480,11 +641,28 @@
       <h1>PENGUINS</h1>
       <span>CALCULATOR</span>
     </div>
+    <button class="icon-btn" id="sidebarToggle" type="button" title="History">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="3" width="16" height="14" rx="2.5" stroke="#ffa04d" stroke-width="1.6"/>
+        <line x1="7.5" y1="3" x2="7.5" y2="17" stroke="#ffa04d" stroke-width="1.6"/>
+      </svg>
+    </button>
     <div class="led"></div>
   </div>
 
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <span class="sidebar-title">History</span>
+      <div class="sidebar-head-actions">
+        <button class="sidebar-clear" id="clearHistoryBtn" type="button">Clear</button>
+        <button class="sidebar-close" id="sidebarClose" type="button">Done</button>
+      </div>
+    </div>
+    <div class="sidebar-body" id="sidebarBody"></div>
+  </div>
+
   <div class="screen">
-    <div class="history-tape" id="historyTape"></div>
     <div class="expr-trail" id="exprTrail"></div>
     <div class="display" id="display">0</div>
     <div class="subdisplay" id="subdisplay">DECIMAL</div>
@@ -535,7 +713,10 @@
   <div class="bits">
     <div class="bits-title">
       <span>32-BIT REGISTER</span>
-      <button class="steps-btn" id="stepsBtn" type="button">STEPS →</button>
+      <div class="bits-title-actions">
+        <button class="steps-btn" id="tableBtn" type="button">TABLE</button>
+        <button class="steps-btn" id="stepsBtn" type="button">STEPS →</button>
+      </div>
     </div>
     <div class="bit-grid" id="bitGridHigh"></div>
     <div class="bit-grid" id="bitGridLow"></div>
@@ -583,9 +764,33 @@ const MAX_VAL = 4294967295;
 let mode = "DEC";
 let input = "0";
 let exprTokens = [];   // alternating {type:'num', dec} / {type:'op', symbol}
-let history = [];      // {expr, result} for the current session
 
 const OP_SYMBOL = { "+": "+", "-": "−", "*": "×", "/": "÷" };
+const HISTORY_KEY = "penguinsCalcHistory";
+const DAY_MS = 86400000;
+
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    const cutoff = Date.now() - 30 * DAY_MS;
+    return parsed.filter(e => e && typeof e.ts === "number" && e.ts >= cutoff);
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory() {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  } catch {
+    // storage unavailable (private mode, quota, etc.) — history just won't persist
+  }
+}
+
+let history = loadHistory(); // {expr, result, ts}
 
 for (let i = 0; i < 16; i++) {
   const b1 = document.createElement("div");
@@ -665,13 +870,44 @@ function renderTrail() {
   trail.textContent = parts.join(" ") + " " + input;
 }
 
-function renderHistory() {
-  const tape = document.getElementById("historyTape");
-  tape.innerHTML = history
-    .map(h => `<div>${h.expr} <span class="h-result">= ${h.result}</span></div>`)
-    .join("");
-  tape.classList.toggle("has-entries", history.length > 0);
-  tape.scrollTop = tape.scrollHeight;
+function groupHistory() {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const sevenDaysAgo = startOfToday - 7 * DAY_MS;
+  const thirtyDaysAgo = startOfToday - 30 * DAY_MS;
+
+  const groups = { today: [], week: [], month: [] };
+
+  [...history]
+    .sort((a, b) => b.ts - a.ts)
+    .forEach(entry => {
+      if (entry.ts >= startOfToday) groups.today.push(entry);
+      else if (entry.ts >= sevenDaysAgo) groups.week.push(entry);
+      else if (entry.ts >= thirtyDaysAgo) groups.month.push(entry);
+    });
+
+  return groups;
+}
+
+function renderSidebar() {
+  const body = document.getElementById("sidebarBody");
+  const groups = groupHistory();
+  const sections = [
+    { key: "today", label: "Today" },
+    { key: "week", label: "Previous 7 Days" },
+    { key: "month", label: "Previous 30 Days" }
+  ];
+
+  let html = "";
+  sections.forEach(s => {
+    if (groups[s.key].length === 0) return;
+    html += `<div class="hist-group-title">${s.label}</div>`;
+    groups[s.key].forEach(e => {
+      html += `<div class="hist-entry"><div class="hist-expr">${e.expr}</div><div class="hist-result">${e.result}</div></div>`;
+    });
+  });
+
+  body.innerHTML = html || '<div class="hist-empty">No calculations yet</div>';
 }
 
 function clear() {
@@ -686,26 +922,52 @@ function backspace() {
   update();
 }
 
+function pushOperator(symbol) {
+  let dec = parseInt(input, getBase());
+  if (isNaN(dec)) dec = 0;
+  dec = Math.max(0, Math.min(MAX_VAL, dec));
+
+  exprTokens.push({ type: "num", dec });
+  exprTokens.push({ type: "op", symbol });
+  input = "0";
+  renderTrail();
+  update();
+}
+
 function calculate() {
-  if (stored === null || operator === null) return;
+  if (exprTokens.length === 0) return; // nothing chained, "=" has nothing new to do
 
-  const current = parseInt(input, getBase());
-  let result = 0;
+  let dec = parseInt(input, getBase());
+  if (isNaN(dec)) dec = 0;
+  dec = Math.max(0, Math.min(MAX_VAL, dec));
 
-  if (operator === "+") result = stored + current;
-  if (operator === "-") result = stored - current;
-  if (operator === "*") result = stored * current;
-  if (operator === "/") result = current === 0 ? 0 : Math.floor(stored / current);
+  const tokens = [...exprTokens, { type: "num", dec }];
+  const exprStr = tokens
+    .map(t => (t.type === "num" ? formatNum(t.dec) : OP_SYMBOL[t.symbol]))
+    .join(" ");
+
+  // evaluate left to right, keeping real (possibly negative) intermediates —
+  // only the final result is clamped to the unsigned 32-bit register range
+  let result = tokens[0].dec;
+  for (let i = 1; i < tokens.length; i += 2) {
+    const op = tokens[i].symbol;
+    const operand = tokens[i + 1].dec;
+    if (op === "+") result += operand;
+    else if (op === "-") result -= operand;
+    else if (op === "*") result *= operand;
+    else if (op === "/") result = operand === 0 ? 0 : Math.trunc(result / operand);
+  }
 
   result = Math.max(0, Math.min(MAX_VAL, result));
+  const resultStr = formatNum(result);
 
-  input =
-    mode === "BIN" ? result.toString(2) :
-    mode === "HEX" ? result.toString(16).toUpperCase() :
-    result.toString(10);
+  history.push({ expr: exprStr, result: resultStr, ts: Date.now() });
+  saveHistory();
+  renderSidebar();
 
-  stored = null;
-  operator = null;
+  input = resultStr;
+  exprTokens = [];
+  renderTrail();
   update();
 }
 
@@ -724,6 +986,7 @@ function setMode(newMode) {
 
   hexButtons.forEach(b => (b.disabled = mode !== "HEX"));
 
+  renderTrail();
   update();
 }
 
@@ -732,10 +995,7 @@ document.querySelectorAll("[data-value]").forEach(button => {
     const value = button.dataset.value;
 
     if ("+-*/".includes(value)) {
-      stored = parseInt(input, getBase());
-      operator = value;
-      input = "0";
-      update();
+      pushOperator(value);
       return;
     }
 
@@ -827,10 +1087,41 @@ modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) closeStepsModal();
 });
 
+// ---------- history sidebar ----------
+
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+function openSidebar() {
+  renderSidebar();
+  sidebar.classList.add("open");
+  sidebarOverlay.classList.add("open");
+}
+
+function closeSidebar() {
+  sidebar.classList.remove("open");
+  sidebarOverlay.classList.remove("open");
+}
+
+document.getElementById("sidebarToggle").addEventListener("click", () => {
+  sidebar.classList.contains("open") ? closeSidebar() : openSidebar();
+});
+document.getElementById("sidebarClose").addEventListener("click", closeSidebar);
+sidebarOverlay.addEventListener("click", closeSidebar);
+document.getElementById("clearHistoryBtn").addEventListener("click", () => {
+  history = [];
+  saveHistory();
+  renderSidebar();
+});
+
 // keyboard support
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modalOverlay.classList.contains("open")) {
     closeStepsModal();
+    return;
+  }
+  if (e.key === "Escape" && sidebar.classList.contains("open")) {
+    closeSidebar();
     return;
   }
 
@@ -838,10 +1129,7 @@ window.addEventListener("keydown", (e) => {
   if (/^[0-9a-fA-F]$/.test(k) && validCharacter(k.toUpperCase())) {
     addCharacter(k.toUpperCase());
   } else if ("+-*/".includes(k)) {
-    stored = parseInt(input, getBase());
-    operator = k;
-    input = "0";
-    update();
+    pushOperator(k);
   } else if (k === "Enter" || k === "=") {
     e.preventDefault();
     calculate();

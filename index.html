@@ -751,6 +751,34 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="tableModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Reference Table</h2>
+      <button class="modal-close" id="tableModalClose" type="button">✕</button>
+    </div>
+    <div class="ref-table">
+      <div class="ref-row ref-head"><span>DEC</span><span>BIN</span><span>HEX</span></div>
+      <div class="ref-row"><span>0</span><span>0000</span><span>0</span></div>
+      <div class="ref-row"><span>1</span><span>0001</span><span>1</span></div>
+      <div class="ref-row"><span>2</span><span>0010</span><span>2</span></div>
+      <div class="ref-row"><span>3</span><span>0011</span><span>3</span></div>
+      <div class="ref-row"><span>4</span><span>0100</span><span>4</span></div>
+      <div class="ref-row"><span>5</span><span>0101</span><span>5</span></div>
+      <div class="ref-row"><span>6</span><span>0110</span><span>6</span></div>
+      <div class="ref-row"><span>7</span><span>0111</span><span>7</span></div>
+      <div class="ref-row"><span>8</span><span>1000</span><span>8</span></div>
+      <div class="ref-row"><span>9</span><span>1001</span><span>9</span></div>
+      <div class="ref-row"><span>10</span><span>1010</span><span>A</span></div>
+      <div class="ref-row"><span>11</span><span>1011</span><span>B</span></div>
+      <div class="ref-row"><span>12</span><span>1100</span><span>C</span></div>
+      <div class="ref-row"><span>13</span><span>1101</span><span>D</span></div>
+      <div class="ref-row"><span>14</span><span>1110</span><span>E</span></div>
+      <div class="ref-row"><span>15</span><span>1111</span><span>F</span></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const display = document.getElementById("display");
 const subdisplay = document.getElementById("subdisplay");
@@ -1087,6 +1115,24 @@ modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) closeStepsModal();
 });
 
+// ---------- static reference table ----------
+
+const tableModalOverlay = document.getElementById("tableModalOverlay");
+
+function openTableModal() {
+  tableModalOverlay.classList.add("open");
+}
+
+function closeTableModal() {
+  tableModalOverlay.classList.remove("open");
+}
+
+document.getElementById("tableBtn").addEventListener("click", openTableModal);
+document.getElementById("tableModalClose").addEventListener("click", closeTableModal);
+tableModalOverlay.addEventListener("click", (e) => {
+  if (e.target === tableModalOverlay) closeTableModal();
+});
+
 // ---------- history sidebar ----------
 
 const sidebar = document.getElementById("sidebar");
@@ -1118,6 +1164,10 @@ document.getElementById("clearHistoryBtn").addEventListener("click", () => {
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modalOverlay.classList.contains("open")) {
     closeStepsModal();
+    return;
+  }
+  if (e.key === "Escape" && tableModalOverlay.classList.contains("open")) {
+    closeTableModal();
     return;
   }
   if (e.key === "Escape" && sidebar.classList.contains("open")) {
